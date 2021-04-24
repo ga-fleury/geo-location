@@ -76,7 +76,7 @@ function getData() {
 
 /* TODO
 
-find a better wa
+find a better way to fetch db after POST and before draw();
 
 */
 
