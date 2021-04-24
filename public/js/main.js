@@ -5,6 +5,12 @@ let myMap;
 let canvas;
 const mappa = new Mappa("Leaflet");
 
+var x = 1;
+var opac = 255;
+var w = 5;
+
+var locations;
+
 // Lets put all our map options in a single object
 const options = {
   lat: -15,
@@ -16,7 +22,6 @@ const options = {
 function preload() {
   locationData = getCurrentPosition();
 }
-
 
 function setup() {
   // print(locationData.latitude);
@@ -46,43 +51,68 @@ function setup() {
     body: JSON.stringify(data),
   };
 
-  fetch("/api", opt).then(response => {
+  fetch("/api", opt).then((response) => {
     console.log(response);
   });
 }
 
-var x = 1;
-var opac = 255;
-var w = 5;
+getData();
+
+// async function getData() {
+//   const response = await fetch("/api");
+//   const data = await response.json();
+//   console.log(data);
+//   return (locations = data);
+// }
+
+function getData() {
+  //waits half a second to fetch data to ensure current user location is there
+  setTimeout(function () {
+    fetch("/api")
+      .then((response) => response.json())
+      .then((data) => (locations = data));
+  }, 500);
+}
+
+/* TODO
+
+find a better wa
+
+*/
 
 function draw() {
-  clear();
-  noFill();
-  stroke(250, 10, 10, opac);
-  strokeWeight(w);
+  // waits to start drawing so that location won't be empty
+  if (frameCount > 35) {
+    clear();
+    noFill();
+    stroke(250, 10, 10, opac);
+    strokeWeight(w);
 
-  const userLocation = myMap.latLngToPixel(
-    locationData.latitude,
-    locationData.longitude
-  );
-  // Using that position, draw an ellipse
-  ellipse(userLocation.x, userLocation.y, x, x);
+    // const userLocation = myMap.latLngToPixel(
+    //   locationData.latitude,
+    //   locationData.longitude
+    // );
+    // // Using that position, draw an ellipse
+    // ellipse(userLocation.x, userLocation.y, x, x);
 
-  const userLocation2 = myMap.latLngToPixel(-23.576616, -46.739118);
-  ellipse(userLocation2.x, userLocation2.y, x, x);
+    // const userLocation3 = myMap.latLngToPixel(-22.983911, -43.201888);
+    // ellipse(userLocation3.x, userLocation3.y, x, x);
 
-  const userLocation3 = myMap.latLngToPixel(-22.983911, -43.201888);
-  ellipse(userLocation3.x, userLocation3.y, x, x);
+    for (let i = 0; i < locations.length; i++) {
+      const pos = myMap.latLngToPixel(locations[i].lat, locations[i].lon);
+      ellipse(pos.x, pos.y, x, x);
+    }
 
-  if (x < 100) {
-    x = x + 1;
-    w = w - 0.1;
-  } else if ((x = 99)) {
-    x = 10;
-    opac = 255;
-    w = 5;
-  }
-  if (opac > 0) {
-    opac = opac - 4;
+    if (x < 100) {
+      x = x + 1;
+      w = w - 0.1;
+    } else if ((x = 99)) {
+      x = 10;
+      opac = 255;
+      w = 5;
+    }
+    if (opac > 0) {
+      opac = opac - 4;
+    }
   }
 }
