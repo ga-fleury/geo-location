@@ -32,7 +32,7 @@ function setup() {
   // print(locationData.heading);
   // print(locationData.speed);
 
-  canvas = createCanvas(1920, 1000);
+  canvas = createCanvas(displayWidth - 80, displayHeight - 80);
   // background(100); let's uncomment this, we don't need it for now
 
   // Create a tile map with the options declared
@@ -78,6 +78,8 @@ function getData() {
 
 find a better way to fetch db after POST and before draw();
 
+maybe try to use setInterval to query the DB every 2 seconds or so
+
 */
 
 function draw() {
@@ -103,6 +105,7 @@ function draw() {
       ellipse(pos.x, pos.y, x, x);
     }
 
+    //dot animation
     if (x < 100) {
       x = x + 1;
       w = w - 0.1;
